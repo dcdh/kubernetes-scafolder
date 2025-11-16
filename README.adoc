@@ -13,3 +13,8 @@ curl -fsSL https://get.pulumi.com | sh
 https://www.pulumi.com/docs/iac/languages-sdks/java/
 
 pulumi new java
+
+== Kubernetes
+
+https://www.youtube.com/watch?v=-uqXhRC5uMs
+
