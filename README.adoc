@@ -1,0 +1,15 @@
+= Kubernetes scafolder
+
+== Pulumi
+
+=== installation
+
+https://www.pulumi.com/docs/get-started/download-install/
+
+curl -fsSL https://get.pulumi.com | sh
+
+=== Java
+
+https://www.pulumi.com/docs/iac/languages-sdks/java/
+
+pulumi new java
