@@ -7,7 +7,7 @@ https://www.youtube.com/watch?v=-uqXhRC5uMs
 Installation from VM:
 [source,shell]
 ----
-01_kube_install.sh
+./01_kube_install.sh
 ----
 
 === Networks
@@ -33,7 +33,7 @@ image::02_network_adapter_2.png[]
 Installation from VM:
 [source,shell]
 ----
-02_cilium_install.sh
+./02_cilium_install.sh
 ----
 
 Cilium is used for CNI and LoadBalancer configuration
@@ -55,7 +55,7 @@ Multiple prerequisites:
 Installation from VM:
 [source,shell]
 ----
-03_hello_app_install.sh
+./03_hello_app_install.sh
 ----
 
 Host configuration using the VM **192.168...** IP from HOST
