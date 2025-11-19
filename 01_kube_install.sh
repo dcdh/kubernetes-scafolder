@@ -1,5 +1,6 @@
 #!/bin/bash
 echo -e "\e[32mStart kubernetes installation\e[0m"
+source /etc/os-release
 if [[ "$PRETTY_NAME" != "Fedora Linux 43 (Server Edition)" ]]; then
     echo -e "\e[31m[ERROR]\e[0m Only run on Fedora Linux 43 (Server Edition)"
     echo -e "\e[31m[ERROR]\e[0m OS detected : $PRETTY_NAME"

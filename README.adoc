@@ -4,6 +4,31 @@
 
 https://www.youtube.com/watch?v=-uqXhRC5uMs
 
+prerequisites
+
+Connection
+[source,shell]
+----
+ssh damien@192.168.59.115
+----
+
+git installation
+[source,shell]
+----
+sudo dnf install git -y
+----
+
+clone repository
+[source,shell]
+----
+git clone https://github.com/dcdh/kubernetes-scafolder.git -v
+
+FCK le clone ne passe pas ...telecharger les fichiers sh  brut !!
+
+----
+
+Other commands must be done from **kubernetes-scafolder** repository.
+
 Installation from VM:
 [source,shell]
 ----
