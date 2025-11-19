@@ -25,4 +25,5 @@ helm install cilium cilium/cilium --version 1.18.2 \
   --set nodeIPAM.enabled=true \
   --set defaultLBServiceIPAM=nodeipam
 kubectl get pod -A
+kubectl label node localhost.localdomain node.kubernetes.io/exclude-from-external-load-balancers-
 echo -e "\e[32mEnd cilium installation\e[0m"
