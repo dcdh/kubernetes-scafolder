@@ -23,6 +23,7 @@ fi
 swapoff -a
 sed -e '/swap/ s/^#*/#/' -i /etc/fstab
 systemctl mask swap.target
+sysctl -w net.ipv4.ip_forward=1
 bash -c 'echo "net.ipv4.ip_forward=1" > /usr/lib/sysctl.d/100-k8s.conf'
 dnf install cri-o crun container-selinux -y
 systemctl enable crio --now
