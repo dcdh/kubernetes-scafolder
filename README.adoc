@@ -22,9 +22,6 @@ clone repository
 [source,shell]
 ----
 git clone https://github.com/dcdh/kubernetes-scafolder.git -v
-
-FCK le clone ne passe pas ...telecharger les fichiers sh  brut !!
-
 ----
 
 Other commands must be done from **kubernetes-scafolder** repository.
@@ -39,7 +36,7 @@ Installation from VM:
 
 The VM will have two actives networks.
 
-WARNING: The order of networks definition is very important.
+INFO: **ERRATUM** The order of networks definition is not important. Cilium will always choose the interface which can access to internet (NAT interface in our case).
 
 1. bridge network
 +
@@ -52,6 +49,21 @@ image::01_network_adapter_1.png[]
 Define a nat network to allow VM to internet communication.
 +
 image::02_network_adapter_2.png[]
++
+The nat network is not accessible from the host.
++
+To make it accessible, a port forward must be defined with
++
+* **Name**: What you want
+* **Protocol**: TCP
+* **Host IP**: 127.0.0.1
+* **Host PORT**: 8080
+* **Guest IP**: 10.0...
+* **Guest Port**: 80
++
+and so, the hello world service will be available on port **8080** from the guest.
++
+image::03_nat_port_forwarding_setup.png[]
 
 === Cilium
 
@@ -83,16 +95,16 @@ Installation from VM:
 ./03_hello_app_install.sh
 ----
 
-Host configuration using the VM **192.168...** IP from HOST
+Host configuration using the VM **127.0.0.1** IP from HOST
 [source,shell]
 ----
-echo "192.168.59.114 hello.local-lab.com" | sudo tee -a /etc/hosts
+echo "127.0.0.1 hello.local-lab.com" | sudo tee -a /etc/hosts
 ----
 
 Execution from HOST
 [source,shell]
 ----
-curl http://hello.local-lab.com
+curl http://hello.local-lab.com:8080
 ----
 
 === Observability

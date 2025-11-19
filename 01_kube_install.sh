@@ -46,6 +46,7 @@ kubeadm init --v=5
 mkdir -p $HOME/.kube
 cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 chown $(id -u):$(id -g) $HOME/.kube/config
+# make pod deployable on control plane
 kubectl taint nodes --all node-role.kubernetes.io/control-plane-
 # disable firewall or coredns pods will be stuck in pending
 systemctl stop firewalld
