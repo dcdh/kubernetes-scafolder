@@ -171,3 +171,102 @@ remove label on node
 ----
 kubectl label node localhost.localdomain node.kubernetes.io/exclude-from-external-load-balancers-
 ----
+
+inspect gateway
+[source,shell]
+----
+kubectl get gateway hello-gateway -n hello -o yaml | grep -A5 allowedRoutes
+----
+
+get httproute
+[source,shell]
+----
+kubectl get httproute -A -o wide
+----
+
+get httproute
+[source,shell]
+----
+kubectl get httproute hello-route -n hello -o yaml
+----
+
+=== GATEWAY ISSUE
+
+If I've got a Hello deployment defining this kind of Gateway:
+
+[source,yaml]
+----
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: Gateway
+metadata:
+  name: hello-gateway
+spec:
+  gatewayClassName: cilium
+  listeners:
+    - name: http
+      protocol: HTTP
+      port: 80
+      allowedRoutes:
+        namespaces:
+          from: Same
+----
+
+If I decide to deploy multiple instances on multiples namespaces likes **hello** accessible via **hello.local-lab.com** and **hello2** accessible via **hello2.local-lab.com**,
+the first deployment will win and the second will not be available. Calling **http://hello.local-lab.com:8080** or **http://hello2.local-lab.com:8080** will call the first pod deployed each time
+
+Checking the logs this way **kubectl logs pods/cilium-c6kft -n kube-system**
+
+[source]
+----
+time=2025-11-19T20:54:27.754261304Z level=warn msg="Failure processing services" module=agent.controlplane.loadbalancer-reflectors.k8s-reflector error="frontend already owned by another service: 10.0.3.15:80/TCP is owned by hello/hello-service"
+time=2025-11-19T20:54:30.998768658Z level=info msg="Triggering full policy recalculation and regeneration of all endpoints" module=agent.controlplane.policy reason="Envoy Listeners changed"
+time=2025-11-19T20:54:31.172857259Z level=info msg="Auto-detected local ports to reserve in the container namespace for transparent DNS proxy" module=agent.controlplane.cilium-restapi.config-modification ports="[51871 8472]"
+time=2025-11-19T20:54:31.174256419Z level=info msg="Auto-detected local ports to reserve in the container namespace for transparent DNS proxy" module=agent.controlplane.cilium-restapi.config-modification ports="[51871 8472]"
+time=2025-11-19T20:54:31.190346989Z level=info msg="Create endpoint request" module=agent.controlplane.endpoint-api addressing="&{IPV4:10.0.0.57 IPV4ExpirationUUID:c9622729-0b2a-4c33-985d-5e930f488291 IPV4PoolName:default IPV6: IPV6ExpirationUUID: IPV6PoolName:}" containerID=0e090e9cb1e916b5f2d69e971c8a511016dd3e5dd79441ec97f446a052898bb1 containerInterface=eth0 datapathConfiguration="&{DisableSipVerification:false ExternalIpam:false InstallEndpointRoute:false RequireArpPassthrough:false RequireEgressProg:false RequireRouting:<nil>}" interface=lxca5a5881903e1 k8sPodName=hello2/hello-deployment-68bfb55689-xcs8m k8sUID=6921c68a-e6a4-4fb0-94a7-630f34aee740 labels=[] sync-build=true
+time=2025-11-19T20:54:31.190589096Z level=info msg="New endpoint" k8sPodName=hello2/hello-deployment-68bfb55689-xcs8m endpointID=617 ciliumEndpointName=hello2/hello-deployment-68bfb55689-xcs8m desiredPolicyRevision=0 ipv6="" containerID=0e090e9cb1 containerInterface="" ipv4=10.0.0.57 datapathPolicyRevision=0 subsys=endpoint
+time=2025-11-19T20:54:31.19072849Z level=info msg="Resolving identity labels (blocking)" k8sPodName=hello2/hello-deployment-68bfb55689-xcs8m endpointID=617 ciliumEndpointName=hello2/hello-deployment-68bfb55689-xcs8m desiredPolicyRevision=0 ipv6="" containerID=0e090e9cb1 containerInterface="" ipv4=10.0.0.57 datapathPolicyRevision=0 subsys=endpoint identityLabels="k8s:app=hello,k8s:io.cilium.k8s.namespace.labels.kubernetes.io/metadata.name=hello2,k8s:io.cilium.k8s.policy.cluster=default,k8s:io.cilium.k8s.policy.serviceaccount=default,k8s:io.kubernetes.pod.namespace=hello2"
+time=2025-11-19T20:54:31.190803603Z level=info msg="Identity of endpoint changed" k8sPodName=hello2/hello-deployment-68bfb55689-xcs8m endpointID=617 ciliumEndpointName=hello2/hello-deployment-68bfb55689-xcs8m desiredPolicyRevision=0 ipv6="" containerID=0e090e9cb1 containerInterface="" ipv4=10.0.0.57 datapathPolicyRevision=0 subsys=endpoint new-identity=65035 old-identity="no identity" identityLabels="k8s:app=hello,k8s:io.cilium.k8s.namespace.labels.kubernetes.io/metadata.name=hello2,k8s:io.cilium.k8s.policy.cluster=default,k8s:io.cilium.k8s.policy.serviceaccount=default,k8s:io.kubernetes.pod.namespace=hello2"
+time=2025-11-19T20:54:31.190885415Z level=info msg="Waiting for endpoint to be generated" k8sPodName=hello2/hello-deployment-68bfb55689-xcs8m endpointID=617 ciliumEndpointName=hello2/hello-deployment-68bfb55689-xcs8m desiredPolicyRevision=0 ipv6="" containerID=0e090e9cb1 identity=65035 containerInterface="" ipv4=10.0.0.57 datapathPolicyRevision=0 subsys=endpoint
+time=2025-11-19T20:54:31.250822171Z level=warn msg="Failure processing services" module=agent.controlplane.loadbalancer-reflectors.k8s-reflector error="frontend already owned by another service: 10.0.3.15:80/TCP is owned by hello/hello-service\nfrontend already owned by another service: 10.0.3.15:80/TCP is owned by hello/hello-service\nfrontend already owned by another service: 10.0.3.15:80/TCP is owned by hello/hello-service"
+time=2025-11-19T20:54:31.309221526Z level=info msg="Program attached to device using tcx" module=agent.datapath.loader progName=cil_from_container device=lxca5a5881903e1
+time=2025-11-19T20:54:31.309456345Z level=info msg="Reloaded endpoint BPF program" k8sPodName=hello2/hello-deployment-68bfb55689-xcs8m endpointID=617 ciliumEndpointName=hello2/hello-deployment-68bfb55689-xcs8m desiredPolicyRevision=25 ipv6="" containerID=0e090e9cb1 identity=65035 containerInterface="" ipv4=10.0.0.57 datapathPolicyRevision=0 subsys=endpoint
+time=2025-11-19T20:54:31.30970427Z level=info msg="Successful endpoint creation" k8sPodName=hello2/hello-deployment-68bfb55689-xcs8m endpointID=617 ciliumEndpointName=hello2/hello-deployment-68bfb55689-xcs8m desiredPolicyRevision=25 ipv6="" containerID=0e090e9cb1 identity=65035 containerInterface="" ipv4=10.0.0.57 datapathPolicyRevision=25 subsys=endpoint-api
+time=2025-11-19T20:54:32.750660984Z level=warn msg="Failure processing services" module=agent.controlplane.loadbalancer-reflectors.k8s-reflector error="frontend already owned by another service: 10.0.3.15:80/TCP is owned by hello/hello-service\nfrontend already owned by another service: 10.0.3.15:80/TCP is owned by hello/hello-service\nfrontend already owned by another service: 10.0.3.15:80/TCP is owned by hello/hello-service"
+----
+
+Focus on this error **frontend already owned by another service: 10.0.3.15:80/TCP is owned by hello/hello-service**
+
+This error explains this situation:
+* Cilium NodeIPAM attribute only one External IP per Node (10.0.3.15)
+* The service **hello2/hello-service** try to bind the same IP on Port 80
+* But Cilium refused because the same frontend (IP with Port 80) is already bound to **hello/hello-service**
+
+The only way to fix it depending on my setup (Kubernetes on Oracle VM) is to **have only one Gateway** defined on a gateway namespace shared for all http routes and so, Cilium should route correctly by hostname.
+
+NOTE: **allowedRoutes.namespaces.from** must be defined to **All**
+
+All **Service** must define **type** to **ClusterIP**
+
+All **HTTPRoute** must define this **parentRefs** spec:
+
+[source,yaml]
+----
+  parentRefs:
+    - name: cilium-gw
+      namespace: gateway
+----
+
+It should end up this way:
+[source,shell]
+----
+kubectl get svc -A | grep -E '^(gateway|hello|hello2)\s'
+----
+
+----
+gateway       cilium-gateway-cilium-gw   LoadBalancer   10.106.67.93     10.0.3.15     80:31100/TCP             12m
+hello         hello-service              ClusterIP      10.109.138.163   <none>        80/TCP                   11m
+hello2        hello-service              ClusterIP      10.101.204.208   <none>        80/TCP                   11m
+----
+
+Only the gateway is exposed to the external.
+

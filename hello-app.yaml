@@ -33,22 +33,7 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 5678
-  type: LoadBalancer
-  loadBalancerClass: io.cilium/node
----
-apiVersion: gateway.networking.k8s.io/v1beta1
-kind: Gateway
-metadata:
-  name: hello-gateway
-spec:
-  gatewayClassName: cilium
-  listeners:
-    - name: http
-      protocol: HTTP
-      port: 80
-      allowedRoutes:
-        namespaces:
-          from: All
+  type: ClusterIP
 ---
 apiVersion: gateway.networking.k8s.io/v1beta1
 kind: HTTPRoute
@@ -56,7 +41,8 @@ metadata:
   name: hello-route
 spec:
   parentRefs:
-    - name: hello-gateway
+    - name: cilium-gw
+      namespace: gateway
   hostnames:
     - hello.local-lab.com
   rules:

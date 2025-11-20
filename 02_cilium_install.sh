@@ -27,3 +27,6 @@ helm install cilium cilium/cilium --version 1.18.2 \
 kubectl get pod -A
 kubectl label node localhost.localdomain node.kubernetes.io/exclude-from-external-load-balancers-
 echo -e "\e[32mEnd cilium installation\e[0m"
+
+kubectl create namespace gateway
+kubectl apply -f gateway.yaml -n gateway
