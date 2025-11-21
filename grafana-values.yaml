@@ -1,0 +1,123 @@
+namespacesToMonitor:
+  - default
+  - kube-system
+  - monitoring
+
+cloud:
+  logs:
+    enabled: false
+  metrics:
+    enabled: false
+  traces:
+    enabled: false
+
+local:
+  grafana:
+    enabled: true
+  logs:
+    enabled: true
+  metrics:
+    enabled: true
+  traces:
+    enabled: true
+  minio:
+    enabled: false
+
+grafana:
+  enabled: true
+  ingress:
+    enabled: false
+  persistence:
+    enabled: true
+    size: 10Gi
+    # Pas de storageClassName → storageClass par défaut
+    # storageClassName: ""
+  service:
+    type: ClusterIP
+    port: 3000
+  datasources:
+    datasources.yaml:
+      apiVersion: 1
+      datasources:
+        - name: Prometheus
+          type: prometheus
+          access: proxy
+          url: http://alloy-metrics.monitoring.svc.cluster.local:9090
+          isDefault: true
+        - name: Loki
+          type: loki
+          access: proxy
+          url: http://loki-gateway.monitoring.svc.cluster.local
+        - name: Tempo
+          type: tempo
+          access: proxy
+          url: http://tempo-query-frontend.monitoring.svc.cluster.local:3200
+
+loki:
+  enabled: true
+  tracing:
+    enabled: true
+  loki:
+    storage:
+      type: filesystem
+  singleBinary:
+    replicas: 1
+    persistence:
+      enabled: true
+      size: 2Gi
+
+gateway:
+  enabled: true
+  service:
+    type: ClusterIP
+    port: 80
+
+# === TEMPO ===
+tempo:
+  enabled: true
+  tempo:
+    storage:
+      trace:
+        backend: local
+    persistence:
+      enabled: true
+      size: 2Gi
+  gateway:
+    enabled: true
+
+# === ALLOY ===
+alloy-metrics:
+  enabled: true
+alloy-logs:
+  enabled: true
+alloy-traces:
+  enabled: true
+alloy-profiles:
+  enabled: false
+
+# === RESSOURCES ===
+resources:
+  grafana:
+    requests:
+      cpu: 200m
+      memory: 256Mi
+  alloy-metrics:
+    requests:
+      cpu: 300m
+      memory: 300Mi
+  alloy-logs:
+    requests:
+      cpu: 300m
+      memory: 300Mi
+  alloy-traces:
+    requests:
+      cpu: 300m
+      memory: 300Mi
+  loki:
+    requests:
+      cpu: 300m
+      memory: 512Mi
+  tempo:
+    requests:
+      cpu: 300m
+      memory: 512Mi

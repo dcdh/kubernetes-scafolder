@@ -4,6 +4,8 @@
 
 https://www.youtube.com/watch?v=-uqXhRC5uMs
 
+https://sofianedjerbi.com/fr/blog/kubernetes-helm-complexity-myth/
+
 prerequisites
 
 Connection
@@ -108,6 +110,23 @@ curl http://hello.local-lab.com:8080
 ----
 
 === Observability
+
+https://grafana.com/docs/grafana-cloud/monitor-infrastructure/kubernetes-monitoring/configuration/helm-chart-config/helm-chart/?pg=solutions-kubernetes-monitor&plcmt=easy-deployment#overview-of-grafana-kubernetes-monitoring-helm-chart
+
+https://github.com/grafana/k8s-monitoring-helm/tree/main/charts/k8s-monitoring#setup-grafana-chart-repository
+
+https://grafana.com/docs/grafana-cloud/monitor-infrastructure/kubernetes-monitoring/configuration/helm-chart-config/helm-chart/?pg=solutions-kubernetes-monitor&plcmt=easy-deployment#uninstall
+
+https://grafana.com/docs/loki/latest/setup/install/helm/install-monolithic/
+
+https://grafana.com/docs/loki/latest/setup/install/helm/monitor-and-alert/with-local-monitoring/
+
+Uninstall
+[source,shell]
+----
+kubectl delete alloy --all --namespace monitoring
+helm uninstall --namespace monitoring grafana-k8s-monitoring
+----
 
 https://quarkus.io/guides/observability-devservices-lgtm
 
