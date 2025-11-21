@@ -148,6 +148,12 @@ TODO
 
 === Useful commands
 
+List versions of charts
+[source,shell]
+----
+helm search repo grafana --versions | grep meta-monitoring | more
+----
+
 List all resources (except crd)
 [source,shell]
 ----
