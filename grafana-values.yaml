@@ -57,6 +57,7 @@ loki:
   enabled: true
   tracing:
     enabled: true
+  deploymentMode: SingleBinary
   loki:
     storage:
       type: filesystem
@@ -65,12 +66,6 @@ loki:
     persistence:
       enabled: true
       size: 2Gi
-
-gateway:
-  enabled: true
-  service:
-    type: ClusterIP
-    port: 80
 
 # === TEMPO ===
 tempo:
