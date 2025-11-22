@@ -76,9 +76,8 @@ tempo:
       enabled: true
       size: 2Gi
   gateway:
-    enabled: false
+    enabled: true
 
-# === ALLOY ===
 alloy-metrics:
   enabled: true
 alloy-logs:
