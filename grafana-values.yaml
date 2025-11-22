@@ -58,6 +58,12 @@ loki:
   tracing:
     enabled: true
   deploymentMode: SingleBinary
+  backend:
+    enabled: false
+  read:
+    enabled: false
+  write:
+    enabled: false
   loki:
     storage:
       type: filesystem
