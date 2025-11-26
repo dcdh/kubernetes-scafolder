@@ -29,9 +29,7 @@ grafana:
     enabled: false
   persistence:
     enabled: true
-    size: 2Gi
-    # Pas de storageClassName → storageClass par défaut
-    # storageClassName: ""
+    # storageClassName: longhorn-test
   service:
     type: ClusterIP
     port: 3000
@@ -68,9 +66,10 @@ loki:
     storage:
       type: filesystem
   singleBinary:
+    replicas: 1
     persistence:
       enabled: true
-      size: 2Gi
+      # storageClassName: longhorn-test
 
 tempo:
   enabled: true
@@ -80,7 +79,7 @@ tempo:
         backend: local
     persistence:
       enabled: true
-      size: 2Gi
+      # storageClassName: longhorn-test
   gateway:
     enabled: true
 
